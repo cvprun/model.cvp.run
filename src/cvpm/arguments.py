@@ -34,7 +34,14 @@ Simply usage:
   {PROG} {CMD_AGENT}
 """
 
-CMDS: Final[Sequence[str]] = (CMD_AGENT,)
+CMD_WELD_INSPECTOR_PTV3: Final[str] = "weld-inspector-ptv3"
+CMD_WELD_INSPECTOR_PTV3_HELP: Final[str] = "Weld quality inspector using PTv3"
+CMD_WELD_INSPECTOR_PTV3_EPILOG = f"""
+Simply usage:
+  {PROG} {CMD_WELD_INSPECTOR_PTV3}
+"""
+
+CMDS: Final[Sequence[str]] = (CMD_AGENT, CMD_WELD_INSPECTOR_PTV3)
 
 DEFAULT_SEVERITY: Final[str] = SEVERITY_NAME_INFO
 
@@ -76,6 +83,36 @@ def add_agent_parser(subparsers) -> None:
         epilog=CMD_AGENT_EPILOG,
     )
     assert isinstance(parser, ArgumentParser)
+
+    parser.add_argument("uri", help="WebSocket server URI")
+    parser.add_argument("slug", help="Agent slug identifier")
+    parser.add_argument(
+        "--token",
+        default=get_eval(CVPM_AGENT_TOKEN, ""),
+        help="Agent authentication token (or set CVPM_AGENT_TOKEN)",
+    )
+    parser.add_argument("opts", nargs=REMAINDER)
+
+
+def add_weld_inspector_ptv3_parser(subparsers) -> None:
+    # noinspection SpellCheckingInspection
+    parser = subparsers.add_parser(
+        name=CMD_WELD_INSPECTOR_PTV3,
+        help=CMD_WELD_INSPECTOR_PTV3_HELP,
+        formatter_class=RawDescriptionHelpFormatter,
+        epilog=CMD_WELD_INSPECTOR_PTV3_EPILOG,
+    )
+    assert isinstance(parser, ArgumentParser)
+    parser.add_argument("opts", nargs=REMAINDER)
+
+
+def default_argument_parser() -> ArgumentParser:
+    parser = ArgumentParser(
+        prog=PROG,
+        description=DESCRIPTION,
+        epilog=EPILOG,
+        formatter_class=RawDescriptionHelpFormatter,
+    )
 
     logging_group = parser.add_mutually_exclusive_group()
     logging_group.add_argument(
@@ -133,24 +170,6 @@ def add_agent_parser(subparsers) -> None:
         help="Same as ['-c', '-d', '-vv'] flags",
     )
 
-    parser.add_argument("uri", help="WebSocket server URI")
-    parser.add_argument("slug", help="Agent slug identifier")
-    parser.add_argument(
-        "--token",
-        default=get_eval(CVPM_AGENT_TOKEN, ""),
-        help="Agent authentication token (or set CVPM_AGENT_TOKEN)",
-    )
-    parser.add_argument("opts", nargs=REMAINDER)
-
-
-def default_argument_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        prog=PROG,
-        description=DESCRIPTION,
-        epilog=EPILOG,
-        formatter_class=RawDescriptionHelpFormatter,
-    )
-
     add_dotenv_arguments(parser)
 
     home_path = cvp_home()
@@ -169,6 +188,7 @@ def default_argument_parser() -> ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="cmd")
     add_agent_parser(subparsers)
+    add_weld_inspector_ptv3_parser(subparsers)
 
     return parser
 

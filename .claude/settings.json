@@ -15,6 +15,7 @@
       "Bash(tree *)",
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:github.com)",
+      "WebFetch(domain:modal.com)",
       "WebSearch"
     ],
     "deny": [

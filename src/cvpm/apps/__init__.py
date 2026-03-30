@@ -5,14 +5,14 @@ from asyncio.exceptions import CancelledError
 from functools import lru_cache
 from typing import Callable, Dict
 
-from cvpm.apps.agent import agent_main
-from cvpm.arguments import CMD_AGENT
+from cvpm.apps.weld_inspector_ptv3 import weld_inspector_ptv3_main
+from cvpm.arguments import CMD_WELD_INSPECTOR_PTV3
 from cvpm.logging.loggers import logger
 
 
 @lru_cache
 def cmd_apps() -> Dict[str, Callable[[Namespace], None]]:
-    return {CMD_AGENT: agent_main}
+    return {CMD_WELD_INSPECTOR_PTV3: weld_inspector_ptv3_main}
 
 
 def run_app(cmd: str, args: Namespace) -> int:
